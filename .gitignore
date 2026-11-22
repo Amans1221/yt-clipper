@@ -1,0 +1,8 @@
+clips_output/
+last_error.log
+cookies.txt
+__pycache__/
+*.pyc
+.venv/
+*.rar
+*.zip

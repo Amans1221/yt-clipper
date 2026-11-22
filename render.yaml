@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: yt-clipper
+    runtime: docker
+    plan: free
+    envVars:
+      - key: USE_BROWSER_COOKIES
+        value: "0"
+      - key: CLIPS_DIR
+        value: /tmp/clips_output
+      - key: MIN_FREE_GB
+        value: "0.3"
