@@ -666,4 +666,4 @@ if __name__ == "__main__":
     print(f"Storage folder: {WORK_DIR.resolve()}  ({free_space_gb():.2f} GB free)")
     print("✅  yt-dlp ready" + ("" if JS_ARGS else "  (WARNING: no deno/node found)"))
     print("\n🎬  YT Clipper running at  http://localhost:5000\n")
-    app.run(debug=False, port=5000)
+    app.run(debug=False, port=5000, host="0.0.0.0")
