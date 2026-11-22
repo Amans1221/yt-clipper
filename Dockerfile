@@ -1,20 +1,21 @@
+FROM denoland/deno:bin AS deno
 FROM python:3.12-slim
 
-RUN apt-get update && apt-get install -y ffmpeg curl unzip && \
-    curl -fsSL https://deno.land/install.sh | sh && \
-    ln -s /root/.deno/bin/deno /usr/local/bin/deno && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+# System deps for yt-dlp merging and ffmpeg clip cutting
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Modern JS runtime for yt-dlp's YouTube challenge solver
+COPY --from=deno /deno /usr/local/bin/deno
 
 WORKDIR /app
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
-RUN mkdir -p /data/clips_output
 
-ENV CLIPS_DIR=/data/clips_output
-ENV USE_BROWSER_COOKIES=0
-ENV PORT=5000
-
-EXPOSE 5000
-CMD ["gunicorn", "app:app", "--workers", "1", "--threads", "4", "--timeout", "600", "--bind", "0.0.0.0:5000"]
+# Render injects $PORT automatically; keep --workers 1 so in-memory jobs stay consistent
+CMD ["sh", "-c", "gunicorn app:app --bind 0.0.0.0:${PORT:-10000} --workers 1 --threads 4 --timeout 300"]

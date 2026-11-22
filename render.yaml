@@ -1,19 +1,12 @@
 services:
   - type: web
     name: yt-clipper
-    runtime: python
-    buildCommand: |
-      pip install -r requirements.txt
-      apt-get install -y ffmpeg deno || true
-    startCommand: gunicorn app:app --workers 1 --threads 4 --timeout 600 --bind 0.0.0.0:$PORT
-    disk:
-      name: clips
-      mountPath: /data
-      sizeGB: 10
+    runtime: docker
+    plan: free
     envVars:
-      - key: CLIPS_DIR
-        value: /data/clips_output
       - key: USE_BROWSER_COOKIES
         value: "0"
-      - key: YOUTUBE_COOKIES
-        sync: false
+      - key: CLIPS_DIR
+        value: /tmp/clips_output
+      - key: MIN_FREE_GB
+        value: "0.3"
