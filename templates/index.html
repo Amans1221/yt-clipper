@@ -135,25 +135,21 @@ select{background:var(--bg3);border:1px solid var(--border);border-radius:6px;
   .clip-time{margin-left:0}
 }
 
-/* ── Cookie Settings Modal ── */
-.cookie-status {
-  display:inline-flex; align-items:center; gap:6px;
-  font-size:12px; padding:3px 10px; border-radius:20px;
-  font-weight:500;
-}
-.cookie-status.set   { background:rgba(0,229,160,.1); color:var(--green); border:1px solid rgba(0,229,160,.25) }
-.cookie-status.unset { background:var(--bg3); color:var(--fg2); border:1px solid var(--border2) }
-.cookie-textarea {
-  width:100%; height:140px; resize:vertical;
-  background:var(--bg3); border:1.5px solid var(--border2);
-  border-radius:var(--rs); color:var(--fg); font:12px/1.5 'DM Mono',monospace;
-  padding:.7rem; outline:none; transition:border-color .15s;
-}
-.cookie-textarea:focus { border-color:var(--accent) }
-.cookie-steps { margin:.6rem 0 0; padding:0; list-style:none; display:grid; gap:4px }
-.cookie-steps li { font-size:12.5px; color:var(--fg3); padding-left:1.2em; position:relative }
-.cookie-steps li::before { content:'→'; position:absolute; left:0; color:var(--accent) }
-
+.ai-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;
+  padding:2px 8px;border-radius:20px;
+  background:linear-gradient(135deg,rgba(124,92,252,.18),rgba(0,212,200,.12));
+  border:1px solid rgba(124,92,252,.3);color:#a78bfa}
+.cookie-status{display:inline-flex;align-items:center;gap:6px;font-size:12px;
+  padding:3px 10px;border-radius:20px;font-weight:500}
+.cookie-status.set{background:rgba(0,229,160,.1);color:var(--green);border:1px solid rgba(0,229,160,.25)}
+.cookie-status.unset{background:var(--bg3);color:var(--fg2);border:1px solid var(--border2)}
+.cookie-textarea{width:100%;height:140px;resize:vertical;background:var(--bg3);
+  border:1.5px solid var(--border2);border-radius:var(--rs);color:var(--fg);
+  font:12px/1.5 'DM Mono',monospace;padding:.7rem;outline:none;transition:border-color .15s}
+.cookie-textarea:focus{border-color:var(--accent)}
+.cookie-steps{margin:.6rem 0 0;padding:0;list-style:none;display:grid;gap:4px}
+.cookie-steps li{font-size:12.5px;color:var(--fg3);padding-left:1.2em;position:relative}
+.cookie-steps li::before{content:'→';position:absolute;left:0;color:var(--accent)}
 </style>
 </head>
 <body>
@@ -204,6 +200,20 @@ select{background:var(--bg3);border:1px solid var(--border);border-radius:6px;
           <option value="1080">1080p — Full HD</option>
         </select>
       </label>
+      <label>Orientation:
+        <select id="clipOrientation">
+          <option value="horizontal" selected>↔ Horizontal (16:9)</option>
+          <option value="vertical">↕ Vertical / Shorts (9:16)</option>
+        </select>
+      </label>
+      <label>Clip length:
+        <select id="clipDuration">
+          <option value="30">~30 sec (Shorts)</option>
+          <option value="45">~45 sec</option>
+          <option value="60" selected>~1 min</option>
+          <option value="120">~2 min</option>
+        </select>
+      </label>
     </div>
   </div>
 
@@ -234,30 +244,29 @@ select{background:var(--bg3);border:1px solid var(--border);border-radius:6px;
 </main>
 
 
-<!-- Cookie Settings Modal -->
 <div class="modal-backdrop" id="cookieModal" role="dialog" aria-modal="true">
   <div class="modal-box" style="max-width:500px">
     <h2 class="modal-title">YouTube Cookie Settings</h2>
     <p class="modal-desc" style="margin-bottom:.7rem">
-      Paste your <code style="color:var(--accent);font-size:12px">cookies.txt</code> here so the app can
-      download age-restricted or bot-checked videos. Works on Render too.
+      Paste your <code style="color:var(--accent);font-size:12px">cookies.txt</code> here to
+      download age-restricted or bot-checked videos. Also works on Render.
     </p>
     <div id="cookieCurrentStatus" style="margin-bottom:.8rem"></div>
     <ol class="cookie-steps">
       <li>Open Edge/Chrome → install <strong>Get cookies.txt LOCALLY</strong> extension</li>
       <li>Go to <strong>youtube.com</strong> while logged in</li>
-      <li>Click the extension → Export → copy all the text</li>
-      <li>Paste it below and click Save</li>
+      <li>Click the extension → Export → open file in Notepad → Select All → Copy</li>
+      <li>Paste below and click Save</li>
     </ol>
-    <textarea class="cookie-textarea" id="cookieText" placeholder="# Netscape HTTP Cookie File&#10;.youtube.com TRUE / FALSE ..."></textarea>
+    <textarea class="cookie-textarea" id="cookieText"
+      placeholder="# Netscape HTTP Cookie File&#10;.youtube.com TRUE / FALSE ..."></textarea>
     <div class="modal-actions" style="margin-top:.8rem">
-      <button class="btn btn-sm btn-danger" id="cookieDeleteBtn" onclick="deleteCookies()" style="display:none">Remove cookies</button>
+      <button class="btn btn-sm btn-danger" id="cookieDeleteBtn" onclick="deleteCookies()" style="display:none">Remove</button>
       <button class="btn btn-sm" onclick="closeCookieModal()">Cancel</button>
       <button class="btn btn-sm btn-dl" onclick="saveCookies()">Save cookies</button>
     </div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
